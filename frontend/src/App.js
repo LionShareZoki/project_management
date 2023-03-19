@@ -1,26 +1,66 @@
-import logo from "./logo.svg";
-import "./App.css";
-import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 function App() {
-  const [users, setUsers] = useState([]);
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    axios
-      .get("/api/users")
-      .then((response) => setUsers(response.data))
-      .catch((error) => console.log(error));
-  }, []);
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, surname, email, password, type: "regular" }),
+    };
+
+    fetch("http://localhost:5000/api/users", requestOptions)
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error(error));
+  };
 
   return (
-    <ul>
-      {users.map((user) => (
-        <li key={user._id}>
-          {user.name} {user.surname} ({user.email})
-        </li>
-      ))}
-    </ul>
+    <form onSubmit={handleSubmit}>
+      <label>
+        Name:
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </label>
+      <br />
+      <label>
+        Surname:
+        <input
+          type="text"
+          value={surname}
+          onChange={(e) => setSurname(e.target.value)}
+        />
+      </label>
+      <br />
+      <label>
+        Email:
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </label>
+      <br />
+      <label>
+        Password:
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </label>
+      <br />
+      <button type="submit">Submit</button>
+    </form>
   );
 }
 
